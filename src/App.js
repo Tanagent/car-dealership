@@ -1,171 +1,119 @@
-import React, { useState } from 'react';
-import {carData} from './carData';
-import './App.css';
+import React, { Component } from "react";
+import { carData } from './carData';
+import "./App.css";
+import Form from "./Form";
 
-function App() {
-  const [color, setColor] = useState('');
-  const [sunRoof, setSunRoof] = useState('');
-  const [fourWheelDrive, setFourWheelDrive] = useState('');
-  const [lowMiles, setLowMiles] = useState('');
-  const [powerWindows, setPowerWindows] = useState('');
-  const [navigation, setNavigation] = useState('');
-  const [heatedSeats, setHeatedSeats] = useState('');
-  const [cars, setCars] = useState([]);
+class App extends Component {
+  state = {
+    fields: {}
+  };
 
-  const filterColor = (x) => {
-    if(color !== '') {
-      return x.color.toLowerCase() === color;
-    } else {
-      return x;
+  onChange = updatedValue => {
+    this.setState({
+      fields: {
+        ...this.state.fields,
+        ...updatedValue
+      }
+    });
+  };
+
+  empty = (e) => {
+    if(e === undefined)
+      return true;
+    
+    switch (e) {
+      case "":
+      case 0:
+      case "0":
+      case null:
+      case false:
+      case typeof(e) === "undefined":
+        return true;
+      default:
+        return false;
     }
   }
 
-  const filterSunRoof = (x) => {
-    if(sunRoof !== '') {
-      return x.hasSunroof === (sunRoof === 'true');
-    } else {
-      return x;
+  displayFilters = (x) => {
+    let item = [];
+
+    item.push(<div key='make'>Make: {x.make}</div>);
+    item.push(<div key='year'>Year: {x.year}</div>)
+
+    if((x.color.toLowerCase() === this.state.fields.color)) {
+        item.push(<div key='color'>Color: {x.color}</div>)
     }
+
+    if(!this.empty(this.state.fields.sunRoof) || this.state.fields.sunRoof === x.hasSunroof.toString()) {
+      item.push(<div key='sunRoof'>Sun Roof: {x.hasSunroof.toString()}</div>)
+    }
+
+    if(!this.empty(this.state.fields.fourWheelDrive) || this.state.fields.fourWheelDrive === x.isFourWheelDrive.toString()) {
+      item.push(<div key='fourWheelDrive'>Is a four wheel drive: {x.isFourWheelDrive.toString()}</div>)
+    }
+
+    if(!this.empty(this.state.fields.lowMiles) || this.state.fields.lowMiles === x.hasLowMiles.toString()) {
+      item.push(<div key='lowMiles'>Has low miles: {x.hasLowMiles.toString()}</div>)
+    }
+
+    if(!this.empty(this.state.fields.powerWindows) || this.state.fields.powerWindows === x.hasPowerWindows.toString()) {
+      item.push(<div key='powerWindows'>Power Windows: {x.hasPowerWindows.toString()}</div>)
+    }
+
+    if(!this.empty(this.state.fields.navigation) || this.state.fields.navigation === x.hasNavigation.toString()) {
+      item.push(<div key='navigation'>Navigation: {x.hasNavigation.toString()}</div>)
+    }
+
+    if(!this.empty(this.state.fields.heatedSeats) || this.state.fields.heatedSeats === x.hasHeatedSeats.toString()) {
+      item.push(<div key='heatedSeats'>Heated Seats: {x.hasHeatedSeats.toString()}</div>)
+    }
+
+    return item;
   }
 
-  const filterFourWheelDrive = (x) => {
-    if(fourWheelDrive !== '') {
-      return x.isFourWheelDrive === (fourWheelDrive === 'true');
-    } else {
-      return x;
-    }
+  filterCar = (x) => {
+
+    return (this.state.fields.color === x.color.toLowerCase()
+    && (this.empty(this.state.fields.sunRoof) || this.state.fields.sunRoof === x.hasSunroof.toString())
+    
+    );
   }
 
-  const filterLowMiles = (x) => {
-    if(lowMiles !== '') {
-      return x.lowMiles === (lowMiles === 'true');
-    } else {
-      return x;
-    }
-  }
+  displayCars = () => {
 
-  const filterPowerWindows = (x) => {
-    if(powerWindows !== '') {
-      return x.hasPowerWindows === (powerWindows === 'true');
-    } else {
-      return x;
-    }
-  }
+    // var filteredCars = carData.filter(x => this.filterCar(x));
 
-  const filterNavigation = (x) => {
-    if(navigation !== '') {
-      return x.hasNavigation === (navigation === 'true');
-    } else {
-      return x;
-    }
-  }
-
-  const filterHeatedSeats = (x) => {
-    if(heatedSeats !== '') {
-      return x.hasHeatedSeats === (heatedSeats === 'true');
-    } else {
-      return x;
-    }
-  }
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-
-    const result = carData.filter(x => (
-      filterColor(x) &&
-      filterSunRoof(x) &&
-      filterFourWheelDrive(x) &&
-      filterLowMiles(x) &&
-      filterPowerWindows(x) &&
-      filterNavigation(x) &&
-      filterHeatedSeats(x)
+    var filteredCars = carData.filter(x => (
+      (this.empty(this.state.fields.color) || this.state.fields.color === x.color.toLowerCase())
+      && (this.empty(this.state.fields.sunRoof) || this.state.fields.sunRoof === x.hasSunroof.toString())
+      && (this.empty(this.state.fields.fourWheelDrive) || this.state.fields.fourWheelDrive === x.isFourWheelDrive.toString())
+      && (this.empty(this.state.fields.lowMiles) || this.state.fields.lowMiles === x.hasLowMiles.toString())
+      && (this.empty(this.state.fields.powerWindows) || this.state.fields.powerWindows === x.hasPowerWindows.toString())
+      && (this.empty(this.state.fields.navigation) || this.state.fields.navigation === x.hasNavigation.toString())
+      && (this.empty(this.state.fields.heatedSeats) || this.state.fields.heatedSeats === x.hasHeatedSeats.toString())
     ));
 
-    setCars(result);
+    console.log('filteredCars', filteredCars);
+
+    return (
+      filteredCars.map((x, index) => (
+        <div style={{margin: '20px'}} key={index}>
+          {this.displayFilters(x)}
+        </div>
+    )))
   }
 
-  const displayCars = () => {
-    return cars.map((x, index) => (
-      <div key={index}>
-        {x.make}
+  render() {
+    return (
+      <div className="App">
+        <Form onChange={fields => this.onChange(fields)} />
+        <h1>
+          Available Cars to choose from
+        </h1>
+        {this.displayCars()}
       </div>
-    ))
+    );
   }
-
-  return (
-    <div className="App">
-      <form>
-        <label>
-          Color:
-        </label>
-        <select name='color' value={color} onChange={e => setColor(e.target.value)}>
-          <option value="" />
-          <option value="red">Red</option>
-          <option value="white">White</option>
-          <option value="gray">Gray</option>
-          <option value="silver">Silver</option>
-          <option value="black">Black</option>
-        </select>
-        <br />
-        <label>
-          Sun Roof:
-        </label>
-        <select name='sun-roof' value={sunRoof} onChange={e => setSunRoof(e.target.value)}>
-          <option value={undefined} />
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-        <br />
-        <label>
-          4 wheel drive:
-        </label>
-        <select name='four-wheel-drive' value={fourWheelDrive} onChange={e => setFourWheelDrive(e.target.value)}>
-          <option value={undefined} />
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-        <br />
-        <label>
-          Low Miles:
-        </label>
-        <select name='low-miles' value={lowMiles} onChange={e => setLowMiles(e.target.value)}>
-          <option value={undefined} />
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-        <br />
-        <label>
-          Power Windows:
-        </label>
-        <select name='power-windows' value={powerWindows} onChange={e => setPowerWindows(e.target.value)}>
-          <option value={undefined} />
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-        <br />
-        <label>
-          Navigation:
-        </label>
-        <select name='navigation' value={navigation} onChange={e => setNavigation(e.target.value)}>
-          <option value={undefined} />
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-        <br />
-        <label>
-          Heated Seats:
-        </label>
-        <select name='heated-seats' value={heatedSeats} onChange={e => setHeatedSeats(e.target.value)}>
-          <option value={undefined} />
-          <option value={true}>Yes</option>
-          <option value={false}>No</option>
-        </select>
-        <br />
-        <button onClick={(e) => onSubmit(e)}>Submit</button>
-      </form>
-      {displayCars()}
-    </div>
-  );
 }
 
 export default App;
