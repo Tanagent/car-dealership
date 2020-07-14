@@ -81,8 +81,6 @@ class App extends Component {
 
   displayCars = () => {
 
-    // var filteredCars = carData.filter(x => this.filterCar(x));
-
     var filteredCars = carData.filter(x => (
       (this.empty(this.state.fields.color) || this.state.fields.color === x.color.toLowerCase())
       && (this.empty(this.state.fields.sunRoof) || this.state.fields.sunRoof === x.hasSunroof.toString())
@@ -106,6 +104,9 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <h1>
+          Select your filters
+        </h1>
         <Form onChange={fields => this.onChange(fields)} />
         <h1>
           Available Cars to choose from

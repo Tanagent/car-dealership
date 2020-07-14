@@ -20,7 +20,6 @@ export default class Form extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-    // this.props.onSubmit(this.state);
     this.setState({
       color: "",
       sunRoof: "",
